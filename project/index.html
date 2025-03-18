@@ -16,6 +16,10 @@
       type="text/css"
       href="../css/bootstrap.min.css?3213"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/before-after.js/dist/before-after.min.css"
+    />
     <link rel="stylesheet" type="text/css" href="../style.css?2623" />
     <link rel="stylesheet" type="text/css" href="../css/animate.min.css?7140" />
     <link rel="stylesheet" type="text/css" href="../css/all.min.css" />
@@ -106,11 +110,7 @@
           <div class="row">
             <div class="col-md-6">
               <picture
-                ><source
-                  type="image/webp"
-                  srcset="../img/lazyload-ph.png"
-                  data-srcset="../img/placeholder-image.webp" />
-                <img
+                ><img
                   src="../img/lazyload-ph.png"
                   data-src="../img/placeholder-image.png"
                   class="img-fluid img-protected mx-auto d-block imgprod lazyload"
@@ -167,28 +167,16 @@
             >
               <div>
                 <div class="cocoen afterbefore">
-                  <picture
-                    ><source
-                      type="image/webp"
-                      srcset="../img/lazyload-ph.png"
-                      data-srcset="../img/placeholder-image.webp" />
-                    <img
-                      class="before-img img-fluid img-protected lazyload"
-                      src="../img/lazyload-ph.png"
-                      data-src="../img/placeholder-image.png"
-                      alt="antes"
-                  /></picture>
-                  <picture
-                    ><source
-                      type="image/webp"
-                      srcset="../img/lazyload-ph.png"
-                      data-srcset="../img/placeholder-image.webp" />
-                    <img
-                      class="after-img img-fluid img-protected lazyload"
-                      src="../img/lazyload-ph.png"
-                      data-src="../img/placeholder-image.png"
-                      alt="despues"
-                  /></picture>
+                  <img
+                    id="imagenAntes"
+                    src="../img/placeholder-image.png"
+                    alt="Antes"
+                  />
+                  <img
+                    id="imagenDespues"
+                    src="../img/placeholder-image.png"
+                    alt="Después"
+                  />
                 </div>
               </div>
             </div>
@@ -348,7 +336,7 @@
 
     <!-- Additional JS -->
     <script src="../js/jquery.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/before-after.js"></script>
     <script src="../js/bootstrap.bundle.min.js?1163"></script>
     <script src="../js/blocs.min.js?3918"></script>
     <script src="../js/lazysizes.min.js" defer></script>
@@ -369,7 +357,7 @@
     </script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        // Base de datos de productos con ubicación y render
+        // Base de datos de productos con ubicación
         const productos = {
           1: {
             nombre: "Producto 1",
@@ -402,46 +390,52 @@
           return;
         }
 
+        // Obtener datos del producto
+        const producto = productos[productoId];
+
         // Buscar los elementos en el DOM
         const tituloProducto = document.querySelector(".titeprod");
         const imgProducto = document.querySelector(".imgprod"); // Imagen principal
         const descripcionProducto = document.querySelector(".descprod");
         const ubicacionProducto = document.querySelector(".locprod");
 
-        // Buscar imágenes dentro de `.afterbefore` usando el atributo alt
-        const beforeImg = document.querySelector('img[alt="antes"]');
-        const afterImg = document.querySelector('img[alt="despues"]');
-
-        // Obtener datos del producto
-        const producto = productos[productoId];
-
         // Actualizar contenido textual
         tituloProducto.textContent = producto.nombre;
         descripcionProducto.textContent = producto.descripcion;
         ubicacionProducto.innerHTML = `<strong>Ubicación:</strong> ${producto.ubicacion}`;
 
-        // Cargar imagen con manejo de errores
-        const imgPath = `img/${producto.img}`;
+        // Ruta completa de la imagen
+        let fullPath = `${window.location.origin}/img/${producto.img}`;
 
-        fetch(imgPath)
-          .then((response) => {
-            if (!response.ok) throw new Error("Imagen no encontrada");
-            imgProducto.src = imgPath;
-          })
-          .catch((error) => {
-            console.error("Error cargando la imagen:", error);
-            imgProducto.src = "img/default.jpg";
-            imgProducto.alt = "Imagen no disponible";
-          });
+        // Actualizar imagen respetando el lazy loading
+        if (imgProducto) {
+          imgProducto.setAttribute("data-src", fullPath);
+          imgProducto.setAttribute("src", fullPath); // Para forzar la carga inmediata
+          imgProducto.classList.remove("lazyload"); // Opcional: eliminar lazyload si hay problemas
+        }
+        const imgAntes = document.getElementById("imagenAntes");
+        const imgDespues = document.getElementById("imagenDespues");
 
-        // Cargar imágenes de comparación (before/after) usando `alt`
-        if (beforeImg) {
-          beforeImg.dataset.src = `img/${producto.render}`;
+        if (imgAntes && imgDespues) {
+          imgAntes.src = `${window.location.origin}/img/${producto.img}`;
+          imgDespues.src = `${window.location.origin}/img/${producto.render}`;
         }
 
-        if (afterImg) {
-          afterImg.dataset.src = `img/${producto.img}`;
-        }
+        // 🔹 REINICIAR EL EFECTO PARA QUE SE ACTUALICE
+        new BeforeAfter({
+          container: ".cocoen",
+          draggable: true,
+          start: 50,
+        });
+      });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        new BeforeAfter({
+          container: ".cocoen", // Reutilizando la clase CSS
+          draggable: true,
+          start: 50,
+        });
       });
     </script>
   </body>
