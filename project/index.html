@@ -16,6 +16,10 @@
       type="text/css"
       href="../css/bootstrap.min.css?3213"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/before-after.js/dist/before-after.min.css"
+    />
     <link rel="stylesheet" type="text/css" href="../style.css?2623" />
     <link rel="stylesheet" type="text/css" href="../css/animate.min.css?7140" />
     <link rel="stylesheet" type="text/css" href="../css/all.min.css" />
@@ -163,20 +167,16 @@
             >
               <div>
                 <div class="cocoen afterbefore">
-                  <picture
-                    ><img
-                      class="before-img img-fluid img-protected lazyload"
-                      src="../img/lazyload-ph.png"
-                      data-src="../img/placeholder-image.png"
-                      alt="antes"
-                  /></picture>
-                  <picture
-                    ><img
-                      class="after-img img-fluid img-protected lazyload"
-                      src="../img/lazyload-ph.png"
-                      data-src="../img/placeholder-image.png"
-                      alt="despues"
-                  /></picture>
+                  <img
+                    id="imagenAntes"
+                    src="../img/placeholder-image.png"
+                    alt="Antes"
+                  />
+                  <img
+                    id="imagenDespues"
+                    src="../img/placeholder-image.png"
+                    alt="Después"
+                  />
                 </div>
               </div>
             </div>
@@ -336,7 +336,7 @@
 
     <!-- Additional JS -->
     <script src="../js/jquery.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/before-after.js"></script>
     <script src="../js/bootstrap.bundle.min.js?1163"></script>
     <script src="../js/blocs.min.js?3918"></script>
     <script src="../js/lazysizes.min.js" defer></script>
@@ -362,18 +362,21 @@
           1: {
             nombre: "Producto 1",
             img: "producto1.jpg",
+            render: "producto1_render.jpg",
             descripcion: "Descripción del producto 1.",
             ubicacion: "Almacén A - Estante 3",
           },
           2: {
             nombre: "Producto 2",
             img: "producto2.jpg",
+            render: "producto2_render.jpg",
             descripcion: "Descripción del producto 2.",
             ubicacion: "Bodega Central - Estante 5",
           },
           3: {
             nombre: "Producto 3",
             img: "producto3.jpg",
+            render: "producto3_render.jpg",
             descripcion: "Descripción del producto 3.",
             ubicacion: "Sucursal Norte - Pasillo 2",
           },
@@ -410,6 +413,29 @@
           imgProducto.setAttribute("src", fullPath); // Para forzar la carga inmediata
           imgProducto.classList.remove("lazyload"); // Opcional: eliminar lazyload si hay problemas
         }
+        const imgAntes = document.getElementById("imagenAntes");
+        const imgDespues = document.getElementById("imagenDespues");
+
+        if (imgAntes && imgDespues) {
+          imgAntes.src = `${window.location.origin}/img/${producto.img}`;
+          imgDespues.src = `${window.location.origin}/img/${producto.render}`;
+        }
+
+        // 🔹 REINICIAR EL EFECTO PARA QUE SE ACTUALICE
+        new BeforeAfter({
+          container: ".cocoen",
+          draggable: true,
+          start: 50,
+        });
+      });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        new BeforeAfter({
+          container: ".cocoen", // Reutilizando la clase CSS
+          draggable: true,
+          start: 50,
+        });
       });
     </script>
   </body>
