@@ -3,6 +3,7 @@
 	About: Metrum Design, Espacios que inspiran, Diseños que perduran
 	Author: Joshua Reinoso
 	Version: 1.0
+	Built with Blocs
 -----------------------------------------------------------------------------------*/
 body{
 	margin:0;
@@ -921,6 +922,8 @@ h1,h2,h3,h4,h5,h6{
 }
 .img-36-style{
 	height:267px;
+	border-radius:20px 20px 20px 20px;
+	width:267px;
 }
 .img-25-style{
 	height:267px;
@@ -1022,7 +1025,6 @@ h1,h2,h3,h4,h5,h6{
 }
 .afterbefore{
 	border-radius:20px 20px 20px 20px;
-	width:950px;
 }
 .h4-feature-cards-style{
 	font-family:"Poppins";
@@ -1043,6 +1045,10 @@ h1,h2,h3,h4,h5,h6{
 .p-bloc-14-style{
 	font-family:"Poppins";
 	font-weight:500;
+}
+.img-bloc-11-style{
+	width:267px;
+	height:267px;
 }
 
 /* = Colour

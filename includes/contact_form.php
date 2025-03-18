@@ -1,4 +1,12 @@
 <?php
+	use PHPMailer\PHPMailer\PHPMailer;
+	use PHPMailer\PHPMailer\SMTP;
+	use PHPMailer\PHPMailer\Exception;
+
+	require 'PHPMailer/Exception.php';
+	require 'PHPMailer/PHPMailer.php';
+	require 'PHPMailer/SMTP.php';
+
 	if (empty($_POST['name']) && strlen($_POST['name']) == 0 || empty($_POST['email']) && strlen($_POST['email']) == 0 || empty($_POST['message']) && strlen($_POST['message']) == 0)
 	{
 		return false;
@@ -7,25 +15,47 @@
 	$name = $_POST['name'];
 	$email = $_POST['email'];
 	$message = $_POST['message'];
-	
+
+	/** SMTP Server Credentials **/
+	$smtp_host = '/*smtp_host*/';
+	$smtp_username = '/*smtp_username*/';
+	$smtp_password = '/*smtp_password*/';
+	$smtp_port = '/*smtp_port*/';
+
 	// Create Message	
 	$to = 'pichuelectrico@gmail.com';
+	$replyTo = $email;
 	$email_subject = "Message from website forms.";
-	$email_body = "You have received a new message. \n\nName: $name \nEmail: $email \nMessage: $message \n";
-	$headers = "MIME-Version: 1.0\r\nContent-type: text/plain; charset=UTF-8\r\n";	
-	$headers .= "From: pichuelectrico@gmail.com\r\n";
-	$headers .= "Reply-To: $email";
+	$email_body = "You have received a new message. <br><br>Name: $name <br>Email: $email <br>Message: $message <br>";
 
-	// Post Message
-	if (function_exists('mail'))
-	{
-		$result = mail($to,$email_subject,$email_body,$headers);
+	$mail = new PHPMailer(true);
+
+	try {
+		$mail->isSMTP();
+		$mail->CharSet = 'utf-8';
+		$mail->Host = $smtp_host;
+		$mail->SMTPAuth = true;
+		$mail->Username = $smtp_username;
+		$mail->Password = $smtp_password;
+		$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; /** or PHPMailer::ENCRYPTION_SMTPS for SSL **/
+		$mail->Port = $smtp_port;
+
+		$mail->setFrom($smtp_username, 'Metrum Design');
+		$mail->addAddress($to);
+    	$mail->addReplyTo($replyTo, 'Reply To');
+
+		$mail->isHTML(true);
+		$mail->Subject = $email_subject;
+		$mail->Body = $email_body;
+
+		$mail->send();
+		exit;
 	}
-	else // Mail() Disabled
+	catch (Exception $e)
 	{
-		$error = array("message" => "The php mail() function is not available on this server.");
-	    header('Content-Type: application/json');
-	    http_response_code(500);
-	    echo json_encode($error);
-	}	
+		$error = array("message" => 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo);
+		header('Content-Type: application/json');
+		http_response_code(500);
+		echo json_encode($error);
+	}
 ?>
